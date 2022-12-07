@@ -10,7 +10,7 @@ module.exports = {
   },
   //get single user by ID
   getSingleUser(req, res) {
-    User.findById({ _id: req.params.userId })
+    User.findOne({ _id: req.params.id })
       .select("-__v")
       .then((user) =>
         !user
@@ -28,7 +28,7 @@ module.exports = {
   //update user
   updateUser(req, res) {
     User.findOneAndUpdate(
-      { _id: req.params.userId },
+      { _id: req.params.id },
       { $set: req.body },
       { runValidators: true, new: true }
     )
@@ -41,19 +41,20 @@ module.exports = {
   },
   //delete a user
   deleteUser(req, res) {
-    User.findOneAndDelete({ _id: req.params.UserId })
+    User.findOneAndDelete({ _id: req.params.id })
       .then((user) =>
         !user
           ? res.status(404).json({ message: "No user with that ID found!" })
-          : Thought.deleteMany({ _id: { $in: user.application } })
+          : Thought.deleteMany({ _id: { $in: user.thought } })
       )
+      .then(() => res.json({ message: "User and thought deleted!" }))
       .catch((err) => res.status(500).json(err));
   },
 
   //createNewFriend
   createNewFriend(req, res) {
     User.findOneAndUpdate(
-      { _id: req.params.userId },
+      { _id: req.params.id },
       { $addToSet: { friends: req.params.friendId } },
       { runValidators: true, new: true }
     )

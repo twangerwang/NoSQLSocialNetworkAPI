@@ -26,4 +26,4 @@ router
   .post(createReaction)
   .delete(deleteReaction);
 
-module.export = router;
+module.exports = router;
